@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "4x6-headshot-generator"
+version = "0.1.0"
+description = "Layout headshot photo onto a 4x6 canvas for printing."
+authors = ["Sao Hsuan Lin <twbd723@gmail.com>"]
+license = "MIT"
+packages = [{ include = "fshg" }]
+
+[tool.poetry.scripts]
+fshg = "fshg.main:main"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Pillow = "*"
+
+[tool.poetry.group.dev.dependencies]
+isort = "*"
+pyink = "*"
+pylint = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
