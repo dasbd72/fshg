@@ -10,9 +10,18 @@ from PIL import ImageOps
 from PIL import ImageTk
 
 
+def cm_to_inch(cm: float) -> float:
+    """Convert centimeters to inches."""
+    return cm / 2.54
+
+
 class PhotoSheetLayout(Enum):
-    ONE_INCH_TAIWAN = (2.8, 3.5)  # cm
-    TWO_INCH_TAIWAN = (3.5, 4.5)  # cm
+    ONE_INCH_TAIWAN = (cm_to_inch(2.8), cm_to_inch(3.5))  # inches
+    TWO_INCH_TAIWAN = (cm_to_inch(3.5), cm_to_inch(4.5))  # inches
+
+
+class CanvasLayout(Enum):
+    FOUR_BY_SIX_INCH = (4, 6)  # inches
 
 
 class AspectCropDialog:
@@ -209,31 +218,37 @@ class AspectCropDialog:
 def create_photo_sheet(
     input_path: str,
     output_path: str,
-    layout: PhotoSheetLayout = PhotoSheetLayout.ONE_INCH_TAIWAN,
+    dpi: int = 1000,
+    photo_layout: PhotoSheetLayout = PhotoSheetLayout.ONE_INCH_TAIWAN,
+    canvas_layout: CanvasLayout = CanvasLayout.FOUR_BY_SIX_INCH,
+    gap: int = 0,
+    border_w: int = 2,
+    border_color: str = "#CCCCCC",
 ):
     """
     Layouts a photo onto a 4x6 inch canvas for printing.
     Default size: Taiwan 1-inch (2.8cm x 3.5cm).
+
+    Args:
+        input_path (str): Path to the input image file.
+        output_path (str): Path to save the output image file.
+        dpi (int): Dots per inch for the output image.
+        photo_layout (PhotoSheetLayout): Layout for the photo size.
+        canvas_layout (CanvasLayout): Layout for the canvas size.
+        gap (int): Gap in pixels between photos on the canvas.
+        border_w (int): Width of the cutting border in pixels.
+        border_color (str): Color of the cutting border.
     """
 
-    # Configuration
-    dpi = 1000
-
     # Canvas: 4x6 inches
-    canvas_w_inch = 6
-    canvas_h_inch = 4
+    canvas_h_inch, canvas_w_inch = canvas_layout.value
     canvas_size = (int(canvas_w_inch * dpi), int(canvas_h_inch * dpi))
 
     # Photo size
-    photo_w_cm, photo_h_cm = layout.value
-    photo_w_px = int((photo_w_cm / 2.54) * dpi)
-    photo_h_px = int((photo_h_cm / 2.54) * dpi)
+    photo_w_inch, photo_h_inch = photo_layout.value
+    photo_w_px = int(photo_w_inch * dpi)
+    photo_h_px = int(photo_h_inch * dpi)
     photo_aspect = photo_w_px / photo_h_px
-
-    # Layout (pixels)
-    gap = 0
-    border_w = 2
-    border_color = "#CCCCCC"
 
     try:
         # Check input file existence
